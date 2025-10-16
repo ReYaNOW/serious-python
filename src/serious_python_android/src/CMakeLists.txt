@@ -5,6 +5,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(serious_python_library VERSION 0.0.1 LANGUAGES C)
 
+# Add 16 KB page size support for Android 15
+if(ANDROID)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
+endif()
+
 add_library(serious_python SHARED
   "serious_python.c"
 )
@@ -13,5 +18,12 @@ set_target_properties(serious_python PROPERTIES
   PUBLIC_HEADER serious_python.h
   OUTPUT_NAME "serious_python"
 )
+
+# Apply link flags for Android
+if(ANDROID)
+    set_target_properties(serious_python PROPERTIES
+        LINK_FLAGS "-Wl,-z,max-page-size=16384"
+    )
+endif()
 
 target_compile_definitions(serious_python PUBLIC DART_SHARED_LIB)
